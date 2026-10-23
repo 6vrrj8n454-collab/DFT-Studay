@@ -1,0 +1,37 @@
+module tb;
+  reg clk, se, scan_in, d1, d2;
+  wire sacn_out;
+  
+  scan_chain_2bit u_chain(
+    .clk(clk), .se(se), .scan_in(scan_in),
+    .d1(d1), .d2(d2), .scan_out(scan_out)
+  );
+  
+  initial begin
+    clk = 0;
+    forever #10 clk = ~clk;
+  end
+  
+  initial begin
+    
+    se = 1; scan_in = 0; d1 = 0; d2 = 0;
+    
+    $display("---Begin to scan shift---");
+    
+    #5 scan_in = 1;
+    
+#20 $display("Time=%0t: Input 1, SDFF1(q)=%b, Output(scan_out)=%b", $time, u_chain.link, scan_out);
+
+scan_in = 0;
+#20 $display("Time=%0t: Input 0, SDFF1(q)=%b, Output(scan_out)=%b", $time, u_chain.link, scan_out);
+
+scan_in = 1;
+#20 $display("Time=%0t: Input 1, SDFF1(q)=%b, Output(scan_out)=%b", $time, u_chain.link, scan_out);
+
+#20 $finish;
+end
+  
+  initial begin
+    $dumpfile("dump.vcd"); $dumpvars(0, tb);
+  end
+endmodule
